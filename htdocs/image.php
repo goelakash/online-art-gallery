@@ -153,120 +153,128 @@ if(!isset($_SESSION['status'])||$_SESSION['status']!='authorized'){
 	<div class="right_div" align="justify">
 <!--		<div class="center-left" align="justify" style="width:300px">  
 -->	
-	<?php
-	require_once("connect.php");
-	$user = $_SESSION['username'];
-	$dbc = new Connect();
-	$conn = $dbc->get_conn();
-	//$conn = new mysqli('localhost','root','','webtech');
-	if ($conn->connect_error) 
-	{
-		die("Connection failed: " . $conn->connect_error);
-	}
-	$id = $_GET['id'];
-	$query = "SELECT * FROM images WHERE id = '$id'";
-	$result = $conn->query($query);
-	
-	if(!$result)
-	echo "Not an object";
+			<?php
+			require_once("connect.php");
+			$user = $_SESSION['username'];
+			$dbc = new Connect();
+			$conn = $dbc->get_conn();
+			//$conn = new mysqli('localhost','root','','webtech');
+			if ($conn->connect_error) 
+			{
+				die("Connection failed: " . $conn->connect_error);
+			}
+			$id = $_GET['id'];
+			$query = "SELECT * FROM images WHERE id = '$id'";
+			$result = $conn->query($query);
+			
+			if(!$result)
+			echo "Not an object";
 
-	if ($result->num_rows > 0)
-	{
-		$row = $result->fetch_assoc(); 
-		$image_username = $row['username'] ;
-		$highest_bidder = $image_username;
-		$min_bid = $row['min_bid'];
-		$sold = $row['sold'];
-			
-		echo "<h1 align='center'>".$row['title']."</h1>
-		<img class='top' src='".$row['path']."' alt='alt_text' style='max-width:800px'/>
-		<h3> Artist: ".$row['artist']."</h3>
-		<h3> Uploaded by: ".$row['username']."</h3>";
+			if ($result->num_rows > 0)
+			{
+				$row = $result->fetch_assoc(); 
+				$image_username = $row['username'] ;
+				$highest_bidder = $image_username;
+				$min_bid = $row['min_bid'];
+				$sold = $row['sold'];
+					
+				echo "<br><h1 align='center' >".$row['title']."</h1><br>
+				<img align='middle' class='top' src='".$row['path']."' alt='alt_text' style='max-width:800px'/>
+				<h4> Artist: ".$row['artist']."</h4>
+				<h4> Uploaded by: ".$row['username']."</h4>";
 
-		$query_2 = "SELECT * FROM bids WHERE id = '$id' ORDER BY bid DESC";		
-		$result_2 = $conn->query($query_2);
-		
-		//check previous bids 
-		if($result_2->num_rows>0)
-		{
-			$row_2 = $result_2->fetch_assoc();
-			
-			if($min_bid<$row_2['bid'])
-			{
-			$min_bid = $row_2['bid'];
-			$highest_bidder = $row_2['username'];
-			}
-		}
-	
-		
-		if($sold==0)
-		{
-			echo "<h3 style='color:#00B800' >Current bid at :  Rs. ".$min_bid."</h3>";		
-			
-			if($_SESSION['username']=="Guest"||$_SESSION['status']!='authorized')
-			{
-						echo "<h3> Login to bid now!</h3>";
-			}
-							
-			
-			else if($highest_bidder==$_SESSION['username']&&$_SESSION['username']!=$image_username)
-			{
-				echo "<br> <h4>Congratulations! You are the highest bidder on this item</h4>";
-			}
-	
-			// get earlier bid of a user
-			else if($highest_bidder!=$_SESSION['username'])
-			{
-				$query_3 = "SELECT * FROM bids where id = '$id' AND username='".$_SESSION['username']."'";
-				$result_3 = $conn->query($query_3);
+				$query_2 = "SELECT * FROM bids WHERE id = '$id' ORDER BY bid DESC";		
+				$result_2 = $conn->query($query_2);
 				
-				while($result_3->num_rows>0)
+				//check previous bids 	
+				
+				if($sold==0)
 				{
-					$row_3 = $result_3->fetch_assoc();
-						if($row_3['username'] == $_SESSION['username'])
-						{
-							echo "<h3> Your earlier bid: ".$row_3['bid']."</h3>";
-							break;
-						}
-				}											
-			
-				if($image_username!=$_SESSION['username'])
-				{		
-						$_SESSION['min_bid']=$min_bid;
-						$_SESSION['id'] = $id;
-						$_SESSION['image_username'] = $row['username'];
+					if($result_2->num_rows>0)
+					{
+						$row_2 = $result_2->fetch_assoc();
 						
-						echo '
-						<form id="bid_form" name="bid_form" method="post" action="bid.php" target="_blank">
-						<label for="bid" class="upload_span">
-						<span><h2>New Bid: </h2></span> 	
-						</label>
-						<input type="number" id="bid" name="bid" class="upload_span" />
-						<br />
-						<input type="submit" id="bid_button" value="Bid Now!" />
-						</form>
-						';
+						if($min_bid<$row_2['bid'])
+						{
+						$min_bid = $row_2['bid'];
+						$highest_bidder = $row_2['username'];
+						}
+					}
+					if($highest_bidder == $image_username)
+					{
+					echo "<h4> No bids yet.</h4>";
+					echo "<h3 style='color:#00B800' >Starting bid at :  Rs. ".$min_bid."</h3>";
+					}
+					else
+					{
+					echo "<h3 style='color:#0000FF' >Current bid at :  Rs. ".$min_bid."</h3>";
+					echo "<h4> Current bidder: ".$highest_bidder."</h4>";		
+					}
+					
+					if($_SESSION['username']=="Guest"||$_SESSION['status']!='authorized')
+					{
+								echo "<h3> Login to bid now!</h3>";
+					}
+									
+					
+					else if($highest_bidder==$_SESSION['username']&&$_SESSION['username']!=$image_username)
+					{
+						echo "<br> <h4>Congratulations! You are the highest bidder on this item</h4>";
+					}
+			
+					// get earlier bid of a user
+					else if($highest_bidder!=$_SESSION['username'])
+					{
+						$query_3 = "SELECT * FROM bids where id = '$id' AND username='".$_SESSION['username']."'";
+						$result_3 = $conn->query($query_3);
+						
+						while($result_3->num_rows>0)
+						{
+							$row_3 = $result_3->fetch_assoc();
+								if($row_3['username'] == $_SESSION['username'])
+								{
+									echo "<h3> Your earlier bid: ".$row_3['bid']."</h3>";
+									break;
+								}
+						}											
+					
+						if($image_username!=$_SESSION['username'])
+						{		
+								$_SESSION['min_bid']=$min_bid;
+								$_SESSION['id'] = $id;
+								$_SESSION['image_username'] = $row['username'];
+								
+								echo '
+								<form id="bid_form" name="bid_form" method="post" action="bid.php" target="_blank">
+								<label for="bid" class="upload_span">
+								<span><h2>New Bid: </h2></span> 	
+								</label>
+								<input type="number" id="bid" name="bid" class="upload_span" />
+								<br />
+								<input type="submit" id="bid_button" value="Bid Now!" />
+								</form>
+								';
+						}
+					}					
+					else if($image_username!=$_SESSION['username'])
+						echo "<h3> No bids on this item yet! <br> </h3> <h4> Be the first one </h4>";
 				}
-			}					
-			else if($image_username!=$_SESSION['username'])
-				echo "<h3> No bids on this item yet! <br> </h3> <h4> Be the first one </h4>";
-		}
-		else
-		{
-			echo "<h3 style='color:#ff5511'> Sold at Rs. $min_bid </h3>";
-		}
-		if($image_username==$_SESSION['username'])
-		{
-			echo "You created this.";	
-		}
-	}
-	else
-		echo "An error occured!";
-	
-	?>
+				else
+				{
+					echo "<h3 style='color:#ff5511'> Sold at Rs. $min_bid </h3>";
+				}
+				if($image_username==$_SESSION['username'])
+				{
+					echo "You created this.";	
+				}
+			}
+			else
+				echo "An error occured!";
+			
+			?>
 				
-		</div>				
-		<br class="clear" />
+	</div>				
+	<br class="clear" />
 	</div>
 		<!-- ****************************************************************************************************************** -->			
 		<script type="text/javascript">

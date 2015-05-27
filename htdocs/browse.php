@@ -145,6 +145,8 @@
                xmlhttp.send();
                }
             </script>	
+         </div>
+
             <ul class="gallery" id="gallery">		
                <?php
                   require_once("connect.php");
@@ -185,7 +187,6 @@
                   ?>		
             </ul>
             <br class="clear" />
-         </div>
       
       <script type="text/javascript">
          $('#nav').dropotron();
@@ -199,6 +200,8 @@
          	usePopupDefaultStyling: false
          });
       </script>
-	</div>
+         </div>
+
+	  </div>
    </body>
 </html>
