@@ -1,0 +1,29 @@
+##############################################
+for a drop down list in menu
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+<a href="#">Services</a>
+							
+					<ul>
+						<li>
+							<a href="#">Design Services</a>
+							<ul>
+								<li><a href="#">Banner Design</a></li>
+								<li><a href="#">Logo Design</a></li>
+								<li><a href="#">Web Design</a></li>
+							</ul>
+								
+						</li>
+						<li><a href="#">Hosting Services</a></li>
+						<li><a href="#">Seo Services</a></li>
+					</ul>
+________________________________________________
+
+var mid = date.getHours()<12 ? "AM":"PM";
+hours = date.getHours()%12;
+var hours = date.getHours()==0 ? 12:hours;
+			
+date.getDate() + '-' + (date.getMonth()+1) + '-' date.getFullYear() + ' ' + hours + ':' +   
++ date.getMinutes() + ':' + mid;
+______________________________________________________
+
+('.$row['username'].':'.$_SESSION['username'].')
